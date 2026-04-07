@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Планети Космосу</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  
+  <style>
+    body {
+      background: linear-gradient(180deg, #0a0a2e 0%, #000000 100%);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .planet-card {
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+    }
+
+    .planet-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .planet-img {
+      transition: transform 0.9s ease;
+    }
+
+    .planet-card:hover .planet-img {
+      transform: scale(1.15) rotate(3deg);
+    }
+
+    .glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 40% 30%, rgba(255,255,255,0.2), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .planet-card:hover .glow {
+      opacity: 1;
+    }
+
+    .fact-bubble {
+      animation: float 5.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* Модальне вікно */
+    #modal {
+      animation: modalPop 0.4s ease-out forwards;
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.9) translateY(30px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Оптимізація під телефони */
+    @media (max-width: 640px) {
+      .planet-card {
+        margin-bottom: 1.75rem;
+      }
+      h1 {
+        font-size: 2.75rem;
+      }
+      .h-80 {
+        height: 280px;
+      }
+      .fact-bubble {
+        font-size: 0.875rem;
+        padding: 10px 14px;
+        max-width: 170px;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    
+    <!-- Заголовок -->
+    <div class="text-center mb-14">
+      <h1 class="text-6xl sm:text-7xl font-bold tracking-tighter mb-4">
+        Планети <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">Космосу</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-gray-400">Натисни на планету — дізнайся все про неї</p>
+    </div>
+
+    <!-- Список планет -->
+    <div class="space-y-12" id="planets-container"></div>
+  </div>
+
+  <!-- МОДАЛЬНЕ ВІКНО -->
+  <div id="modal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center z-[9999] p-4">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="bg-zinc-900 rounded-3xl w-full max-w-xl max-h-[95vh] overflow-hidden shadow-2xl border border-white/10">
+      
+      <div id="modal-content" class="overflow-y-auto max-h-[95vh]"></div>
+
+      <!-- Кнопка закриття -->
+      <button onclick="closeModal()" 
+              class="absolute top-5 right-5 w-11 h-11 flex items-center justify-center text-3xl text-white/60 hover:text-white transition z-10">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <footer class="text-center text-gray-500 text-sm mt-10">
+    Зроблено для любителів космосу • Оптимізовано для телефону
+  </footer>
+
+  <script>
+    const planets = [
+      {
+        name: "Меркурій",
+        emoji: "☿",
+        color: "from-gray-400 to-slate-600",
+        image: "https://source.unsplash.com/featured/?mercury,planet",
+        shortDesc: "Найменша планета",
+        distance: "58 млн км",
+        temp: "До +430°C вдень",
+        factBubble: "Один день довший за рік!",
+        orbitalPeriod: "88 земних днів",
+        diameter: "4 879 км",
+        moons: "0",
+        fullDesc: "Меркурій — найближча до Сонця планета. Тут неймовірні перепади температури: вдень спекотно, а вночі дуже холодно. Поверхня вкрита кратерами.",
+        extraFact: "Через близькість до Сонця один рік на Меркурії триває всього 88 земних днів, а день — майже 59 днів."
+      },
+      {
+        name: "Венера",
+        emoji: "♀",
+        color: "from-orange-400 to-red-500",
+        image: "https://source.unsplash.com/featured/?venus,planet",
+        shortDesc: "Найгарячіша планета",
+        distance: "108 млн км",
+        temp: "+462°C",
+        factBubble: "Схід на заході!",
+        orbitalPeriod: "225 днів",
+        diameter: "12 104 км",
+        moons: "0",
+        fullDesc: "Венера має найгустішу атмосферу серед планет земної групи. Парниковий ефект робить її найгарячішою планетою Сонячної системи.",
+        extraFact: "Венера обертається у зворотному напрямку — Сонце там сходить на заході."
+      },
+      {
+        name: "Земля",
+        emoji: "🜨",
+        color: "from-blue-500 to-cyan-400",
+        image: "https://source.unsplash.com/featured/?earth,planet",
+        shortDesc: "Наша рідна планета",
+        distance: "150 млн км",
+        temp: "+15°C",
+        factBubble: "71% поверхні — вода",
+        orbitalPeriod: "365 днів",
+        diameter: "12 742 км",
+        moons: "1",
+        fullDesc: "Єдина планета, де точно відомо про існування життя. Має рідкі океани, атмосферу та ідеальні умови для розвитку.",
+        extraFact: "Земля — єдина планета Сонячної системи, назва якої не походить від імені римського бога."
+      },
+      {
+        name: "Марс",
+        emoji: "♂",
+        color: "from-red-500 to-orange-600",
+        image: "https://source.unsplash.com/featured/?mars,planet",
+        shortDesc: "Червона планета",
+        distance: "228 млн км",
+        temp: "−60°C",
+        factBubble: "Найвищий вулкан",
+        orbitalPeriod: "687 днів",
+        diameter: "6 779 км",
+        moons: "2",
+        fullDesc: "Марс — планета, яку найчастіше вивчають для майбутньої колонізації. Має найбільший вулкан — Олімп.",
+        extraFact: "Долина Марінер — найбільший каньйон у Сонячній системі."
+      },
+      {
+        name: "Юпітер",
+        emoji: "♃",
+        color: "from-amber-600 to-yellow-700",
+        image: "https://source.unsplash.com/featured/?jupiter,planet",
+        shortDesc: "Найбільша планета",
+        distance: "778 млн км",
+        temp: "−108°C",
+        factBubble: "Велика Червона Пляма",
+        orbitalPeriod: "12 років",
+        diameter: "139 820 км",
+        moons: "95+",
+        fullDesc: "Газовий гігант з потужною магнітосферою. Велика Червона Пляма — це величезний шторм, який триває вже кілька століть.",
+        extraFact: "Юпітер має найбільшу кількість супутників — понад 95."
+      },
+      {
+        name: "Сатурн",
+        emoji: "♄",
+        color: "from-yellow-300 to-amber-400",
+        image: "https://source.unsplash.com/featured/?saturn,planet",
+        shortDesc: "Планета з кільцями",
+        distance: "1.4 млрд км",
+        temp: "−138°C",
+        factBubble: "Може плавати у воді",
+        orbitalPeriod: "29 років",
+        diameter: "120 536 км",
+        moons: "146+",
+        fullDesc: "Сатурн відомий своїми вражаючими кільцями, які складаються з льоду, каміння та пилу.",
+        extraFact: "Сатурн — найменш щільна планета. Якби була величезна ванна, він би плавав у ній."
+      },
+      {
+        name: "Уран",
+        emoji: "♅",
+        color: "from-cyan-400 to-blue-500",
+        image: "https://source.unsplash.com/featured/?uranus,planet",
+        shortDesc: "Лежить на боці",
+        distance: "2.9 млрд км",
+        temp: "−224°C",
+        factBubble: "Найхолодніша планета",
+        orbitalPeriod: "84 роки",
+        diameter: "51 118 км",
+        moons: "28",
+        fullDesc: "Уран — льодяний гігант, який обертається майже «лежачи». Його вісь нахилена на 98 градусів.",
+        extraFact: "Температура на Урані опускається до −224°C — це найхолодніша планета Сонячної системи."
+      },
+      {
+        name: "Нептун",
+        emoji: "♆",
+        color: "from-blue-600 to-indigo-700",
+        image: "https://source.unsplash.com/featured/?neptune,planet",
+        shortDesc: "Найсильніші вітри",
+        distance: "4.5 млрд км",
+        temp: "−201°C",
+        factBubble: "Вітер 2100 км/год",
+        orbitalPeriod: "165 років",
+        diameter: "49 528 км",
+        moons: "16",
+        fullDesc: "Нептун — найвіддаленіша планета-гігант. Тут дмуть найсильніші вітри у всій Сонячній системі.",
+        extraFact: "Нептун був математично передбачений ще до того, як його побачили в телескоп."
+      }
+    ];
+
+    // Створення карток планет
+    function createPlanetCards() {
+      const container = document.getElementById('planets-container');
+      container.innerHTML = '';
+
+      planets.forEach((planet, index) => {
+        const card = document.createElement('div');
+        card.className = `planet-card bg-zinc-900/70 backdrop-blur-xl border border-white/10 cursor-pointer`;
+        card.innerHTML = `
+          <div class="relative h-80 sm:h-96">
+            <img src="${planet.image}" alt="${planet.name}" class="planet-img w-full h-full object-cover brightness-75">
+
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+            <div class="glow"></div>
+
+            <div class="absolute bottom-6 left-6 right-6">
+              <div class="flex items-center gap-4">
+                <div class="text-6xl">${planet.emoji}</div>
+                <div>
+                  <h2 class="text-4xl sm:text-5xl font-bold tracking-tight">${planet.name}</h2>
+                  <p class="text-lg text-gray-300">${planet.shortDesc}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="fact-bubble absolute top-6 right-6 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl text-sm border border-white/20 max-w-[180px]">
+              ${planet.factBubble}
+            </div>
+          </div>
+
+          <div class="p-6 grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-gray-400 text-xs block">ВІДСТАНЬ</span>
+              <span class="font-medium">${planet.distance}</span>
+            </div>
+            <div>
+              <span class="text-gray-400 text-xs block">ТЕМПЕРАТУРА</span>
+              <span class="font-medium">${planet.temp}</span>
+            </div>
+          </div>
+        `;
+        card.onclick = () => showModal(index);
+        container.appendChild(card);
+      });
+    }
+
+    // Відкриття модального вікна
+    function showModal(index) {
+      const planet = planets[index];
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+        <div class="relative">
+          <img src="${planet.image}" alt="${planet.name}" 
+               class="w-full h-80 sm:h-96 object-cover">
+
+          <div class="absolute top-0 left-0 right-0 h-80 sm:h-96 bg-gradient-to-t from-zinc-900 via-zinc-900/70 to-transparent"></div>
+
+          <div class="absolute bottom-0 left-0 right-0 p-8">
+            <div class="flex items-center gap-5">
+              <div class="text-7xl">${planet.emoji}</div>
+              <div>
+                <h2 class="text-5xl font-bold">${planet.name}</h2>
+                <p class="text-xl text-gray-300">${planet.shortDesc}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-8 space-y-8">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 text-center">
+            <div class="bg-zinc-800/50 rounded-2xl p-4">
+              <p class="text-xs text-gray-400">ВІДСТАНЬ ВІД СОНЦЯ</p>
+              <p class="text-xl font-semibold mt-1">${planet.distance}</p>
+            </div>
+            <div class="bg-zinc-800/50 rounded-2xl p-4">
+              <p class="text-xs text-gray-400">ПЕРІОД ОБІГУ</p>
+              <p class="text-xl font-semibold mt-1">${planet.orbitalPeriod}</p>
+            </div>
+            <div class="bg-zinc-800/50 rounded-2xl p-4">
+              <p class="text-xs text-gray-400">ДІАМЕТР</p>
+              <p class="text-xl font-semibold mt-1">${planet.diameter}</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-cyan-300">Про планету</h3>
+            <p class="text-gray-300 leading-relaxed">${planet.fullDesc}</p>
+          </div>
+
+          <div class="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 rounded-3xl p-6">
+            <h3 class="text-lg font-semibold mb-2">Цікавий факт</h3>
+            <p class="text-amber-200 italic">"${planet.extraFact}"</p>
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Ініціалізація
+    window.onload = () => {
+      createPlanetCards();
+    };
+  </script>
+</body>
+</html>
