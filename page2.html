@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Чорні діри Космосу</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+ 
+  <style>
+    body {
+      background: linear-gradient(180deg, #0a0a2e 0%, #000000 100%);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: white;
+      overflow-x: hidden;
+    }
+    .blackhole-card {
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+    }
+    .blackhole-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    }
+    .blackhole-img {
+      transition: transform 0.9s ease;
+    }
+    .blackhole-card:hover .blackhole-img {
+      transform: scale(1.18);
+    }
+    .glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(167, 139, 250, 0.25), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .blackhole-card:hover .glow {
+      opacity: 1;
+    }
+    .fact-bubble {
+      animation: float 5.5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    /* Модальне вікно */
+    #modal {
+      animation: modalPop 0.4s ease-out forwards;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.9) translateY(30px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    /* Оптимізація під телефони */
+    @media (max-width: 640px) {
+      .blackhole-card {
+        margin-bottom: 1.75rem;
+      }
+      h1 {
+        font-size: 2.75rem;
+      }
+      .h-80 {
+        height: 280px;
+      }
+      .fact-bubble {
+        font-size: 0.875rem;
+        padding: 10px 14px;
+        max-width: 170px;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+   
+    <!-- Навігація -->
+    <nav class="sticky top-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
+      <div class="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
+        <h1 class="text-2xl font-bold tracking-tighter">Космос</h1>
+       
+        <div class="flex gap-8 text-lg">
+          <a href="index.html" class="nav-link text-white/70 hover:text-white transition">Планети</a>
+          <a href="page2.html" class="nav-link active text-white">Чорні діри</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+      <div class="text-center mb-16">
+        <h1 class="text-5xl sm:text-7xl font-bold tracking-tighter mb-4">
+          Чорні <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-purple-500 to-fuchsia-500">Діри</span>
+        </h1>
+        <p class="text-xl text-gray-400">Найзагадковіші об'єкти Всесвіту</p>
+      </div>
+
+      <!-- Контейнер для карток -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="blackholes-container"></div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНЕ ВІКНО -->
+  <div id="modal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center z-[9999] p-4">
+    <div onclick="event.stopImmediatePropagation()"
+         class="bg-zinc-900 rounded-3xl w-full max-w-xl max-h-[95vh] overflow-hidden shadow-2xl border border-white/10">
+     
+      <div id="modal-content" class="overflow-y-auto max-h-[95vh]"></div>
+      
+      <!-- Кнопка закриття -->
+      <button onclick="closeModal()"
+              class="absolute top-5 right-5 w-11 h-11 flex items-center justify-center text-3xl text-white/60 hover:text-white transition z-10">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <footer class="text-center text-gray-500 text-sm mt-10">
+    Зроблено для любителів космосу • Оптимізовано для телефону
+  </footer>
+
+  <script>
+    const blackholes = [
+      {
+        name: "Стрілець A*",
+        emoji: "●",
+        color: "from-purple-600 to-violet-700",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Sagittarius_A%2A_%28Event_Horizon_Telescope%29.jpg/1024px-Sagittarius_A%2A_%28Event_Horizon_Telescope%29.jpg",
+        shortDesc: "Надмасивна чорна діра в центрі Чумацького Шляху",
+        mass: "4.3 млн сонячних мас",
+        distance: "26 000 світлових років",
+        factBubble: "Перша сфотографована чорна діра в нашій галактиці",
+        size: "Діаметр ~ 24 млн км",
+        temperature: "Близько 0 K (горизонт подій)",
+        fullDesc: "Стрілець A* — надмасивна чорна діра в центрі нашої галактики Чумацький Шлях. У 2022 році телескоп Event Horizon Telescope зробив її перше зображення.",
+        extraFact: "Вона в 4 мільйони разів масивніша за Сонце, але її горизонт подій помістився б у межах орбіти Меркурія."
+      },
+      {
+        name: "M87*",
+        emoji: "◉",
+        color: "from-fuchsia-600 to-purple-700",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_%28cropped%29.jpg/1024px-Black_hole_-_Messier_87_%28cropped%29.jpg",
+        shortDesc: "Перша сфотографована чорна діра",
+        mass: "6.5 мільярдів сонячних мас",
+        distance: "55 млн світлових років",
+        factBubble: "Гігант у галактиці M87",
+        size: "Діаметр ~ 38 млрд км",
+        temperature: "Майже абсолютний нуль",
+        fullDesc: "У 2019 році Event Horizon Telescope зробив історичне перше зображення чорної діри — M87*. Це була перша пряма візуалізація чорної діри в історії людства.",
+        extraFact: "Її горизонт подій у 40 разів більший за орбіту Нептуна."
+      },
+      {
+        name: "Чорна діра Лебідь X-1",
+        emoji: "⚫",
+        color: "from-indigo-600 to-blue-700",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Cygnus_X-1.jpg/1024px-Cygnus_X-1.jpg",
+        shortDesc: "Перша підтверджена чорна діра",
+        mass: "21 сонячна маса",
+        distance: "6 070 світлових років",
+        factBubble: "Класична зоряна чорна діра",
+        size: "Діаметр ~ 60 км",
+        temperature: "Майже абсолютний нуль",
+        fullDesc: "Лебідь X-1 — перша чорна діра, існування якої було підтверджено науково (1971 рік). Вона утворилася в результаті колапсу масивної зорі.",
+        extraFact: "Вона постійно поглинає матерію зі своєї супутньої зорі, утворюючи потужний рентгенівський диск акреції."
+      },
+      {
+        name: "TON 618",
+        emoji: "◉",
+        color: "from-violet-500 to-fuchsia-600",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Quasar_TON_618.jpg/800px-Quasar_TON_618.jpg",
+        shortDesc: "Одна з наймасивніших відомих чорних дір",
+        mass: "66 мільярдів сонячних мас",
+        distance: "10.8 млрд світлових років",
+        factBubble: "Наймасивніша відома",
+        size: "Діаметр ~ 390 млрд км",
+        temperature: "Майже абсолютний нуль",
+        fullDesc: "TON 618 — одна з наймасивніших надмасивних чорних дір, відомих науці. Її маса перевищує 66 мільярдів мас Сонця.",
+        extraFact: "Якщо поставити її в центр Сонячної системи, її горизонт подій сягав би аж за орбіту Плутона."
+      }
+    ];
+
+    // Створення карток чорних дір
+    function createBlackholeCards() {
+      const container = document.getElementById('blackholes-container');
+      container.innerHTML = '';
+      
+      blackholes.forEach((bh, index) => {
+        const card = document.createElement('div');
+        card.className = `blackhole-card bg-zinc-900/70 backdrop-blur-xl border border-white/10 cursor-pointer`;
+        
+        card.innerHTML = `
+          <div class="relative h-80 sm:h-96">
+            <img src="${bh.image}" alt="${bh.name}" class="blackhole-img w-full h-full object-cover brightness-75">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+            <div class="glow"></div>
+            
+            <div class="absolute bottom-6 left-6 right-6">
+              <div class="flex items-center gap-4">
+                <div class="text-6xl drop-shadow-lg">${bh.emoji}</div>
+                <div>
+                  <h2 class="text-4xl sm:text-5xl font-bold tracking-tight">${bh.name}</h2>
+                  <p class="text-lg text-gray-300">${bh.shortDesc}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="fact-bubble absolute top-6 right-6 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl text-sm border border-white/20 max-w-[180px]">
+              ${bh.factBubble}
+            </div>
+          </div>
+          
+          <div class="p-6 grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-gray-400 text-xs block">МАСА</span>
+              <span class="font-medium">${bh.mass}</span>
+            </div>
+            <div>
+              <span class="text-gray-400 text-xs block">ВІДСТАНЬ</span>
+              <span class="font-medium">${bh.distance}</span>
+            </div>
+          </div>
+        `;
+        
+        card.onclick = () => showModal(index);
+        container.appendChild(card);
+      });
+    }
+
+    // Відкриття модального вікна
+    function showModal(index) {
+      const bh = blackholes[index];
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+        <div class="relative">
+          <img src="${bh.image}" alt="${bh.name}"
+               class="w-full h-80 sm:h-96 object-cover">
+          <div class="absolute top-0 left-0 right-0 h-80 sm:h-96 bg-gradient-to-t from-zinc-900 via-zinc-900/70 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-8">
+            <div class="flex items-center gap-5">
+              <div class="text-7xl drop-shadow-2xl">${bh.emoji}</div>
+              <div>
+                <h2 class="text-5xl font-bold">${bh.name}</h2>
+                <p class="text-xl text-gray-300">${bh.shortDesc}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8 space-y-8">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 text-center">
+            <div class="bg-zinc-800/50 rounded-2xl p-4">
+              <p class="text-xs text-gray-400">МАСА</p>
+              <p class="text-xl font-semibold mt-1">${bh.mass}</p>
+            </div>
+            <div class="bg-zinc-800/50 rounded-2xl p-4">
+              <p class="text-xs text-gray-400">ВІДСТАНЬ</p>
+              <p class="text-xl font-semibold mt-1">${bh.distance}</p>
+            </div>
+            <div class="bg-zinc-800/50 rounded-2xl p-4">
+              <p class="text-xs text-gray-400">РОЗМІР</p>
+              <p class="text-xl font-semibold mt-1">${bh.size}</p>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-purple-300">Про об'єкт</h3>
+            <p class="text-gray-300 leading-relaxed">${bh.fullDesc}</p>
+          </div>
+          
+          <div class="bg-gradient-to-r from-purple-900/30 to-fuchsia-900/30 border border-purple-500/30 rounded-3xl p-6">
+            <h3 class="text-lg font-semibold mb-2">Цікавий факт</h3>
+            <p class="text-amber-200 italic">"${bh.extraFact}"</p>
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Ініціалізація
+    window.onload = () => {
+      createBlackholeCards();
+    };
+  </script>
+</body>
+</html>
