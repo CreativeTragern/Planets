@@ -1,104 +1,15 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-TK74X32D');</script>
-<!-- End Google Tag Manager -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Планети Космосу</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
-  <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TK74X32D"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-  <style>
-    body {
-      background: linear-gradient(180deg, #0a0a2e 0%, #000000 100%);
-      font-family: 'Inter', system-ui, sans-serif;
-      color: white;
-      overflow-x: hidden;
-    }
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C590F0JR23"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    .planet-card {
-      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      border-radius: 24px;
-    }
-
-    .planet-card:hover {
-      transform: translateY(-15px);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-    }
-
-    .planet-img {
-      transition: transform 0.9s ease;
-    }
-
-    .planet-card:hover .planet-img {
-      transform: scale(1.15) rotate(3deg);
-    }
-
-    .glow {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 40% 30%, rgba(255,255,255,0.2), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
-
-    .planet-card:hover .glow {
-      opacity: 1;
-    }
-
-    .fact-bubble {
-      animation: float 5.5s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-
-    /* Модальне вікно */
-    #modal {
-      animation: modalPop 0.4s ease-out forwards;
-    }
-
-    @keyframes modalPop {
-      from { opacity: 0; transform: scale(0.9) translateY(30px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    /* Оптимізація під телефони */
-    @media (max-width: 640px) {
-      .planet-card {
-        margin-bottom: 1.75rem;
-      }
-      h1 {
-        font-size: 2.75rem;
-      }
-      .h-80 {
-        height: 280px;
-      }
-      .fact-bubble {
-        font-size: 0.875rem;
-        padding: 10px 14px;
-        max-width: 170px;
-      }
-    }
-  </style>
-</head>
-<body class="min-h-screen pb-16">
-
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-    
+  gtag('config', 'G-C590F0JR23');
+</script>
     <!-- Заголовок -->
   <nav class="sticky top-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
     <div class="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
